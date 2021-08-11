@@ -1,5 +1,6 @@
 export default class DOMImageSlider {
-  constructor(container = document.body, imgArr, displaySite, sliderArrows, legend = {}) {
+  constructor(container = document.body, imgArr, displaySite, sliderArrows, legend = {}, autoSlide = false) {
+    console.log(autoSlide);
     this.imgArr = [...imgArr];
     this.container = container;
     this.dist = displaySite;
@@ -11,7 +12,10 @@ export default class DOMImageSlider {
     this.shiftImgListener();
     if (this.legend.container && this.legend.className) {
       this.createLegend(this.legend.container, this.legend.className);
-      this.shiftLegendListener();
+      //this.shiftLegendListener();
+    }
+    if (autoSlide) {
+      this.startAutoSlideShow();
     }
   }
   shiftImg(sft) {
@@ -23,8 +27,10 @@ export default class DOMImageSlider {
       this.imgIndex += this.imgArr.length;
     }
     this.dist.src = this.imgArr[this.imgIndex];
+    if (this.legend.container && this.legend.className) {
+      this.reflectLegend(this.imgIndex);
+    }
   }
-  shiftLegendListener(className) {}
   shiftImgListener() {
     const that = this;
     if (this.sliderArrows.length === 0 || typeof this.sliderArrows === "undefined") {
@@ -36,17 +42,17 @@ export default class DOMImageSlider {
       });
     }
   }
-  shiftLegendListener() {
-    for (let i = 0; i < this.sliderArrows.length; i++) {
-      this.sliderArrows[i].addEventListener("click", (e) => {
-        this.container.querySelector(`.${this.legend.className}.selected`).classList.remove("selected");
-        const unSelected = this.container.querySelector(`[data-index='${this.imgIndex}']`);
-        if (unSelected) {
-          unSelected.classList.add("selected");
-        }
-      });
-    }
-  }
+  // shiftLegendListener() {
+  //   for (let i = 0; i < this.sliderArrows.length; i++) {
+  //     this.sliderArrows[i].addEventListener("click", (e) => {
+  //       this.container.querySelector(`.${this.legend.className}.selected`).classList.remove("selected");
+  //       const unSelected = this.container.querySelector(`[data-index='${this.imgIndex}']`);
+  //       if (unSelected) {
+  //         unSelected.classList.add("selected");
+  //       }
+  //     });
+  //   }
+  // }
   displayImgIdx(idx) {
     this.imgIndex = idx;
     this.shiftImg(0);
@@ -69,5 +75,18 @@ export default class DOMImageSlider {
       });
       legendcontainer.appendChild(legendSymbol);
     });
+  }
+  startAutoSlideShow() {
+    setInterval(() => this.shiftImg(1), 3000);
+  }
+  reflectLegend(idx) {
+    const selected = this.container.querySelector(".selected[data-index]");
+    const unSelected = this.container.querySelector(`[data-index='${idx}']`);
+    if (selected) {
+      selected.classList.remove("selected");
+    }
+    if (unSelected) {
+      unSelected.classList.add("selected");
+    }
   }
 }
