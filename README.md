@@ -8,4 +8,4 @@ Repo Of basic ImageSlider Logic.
 - Html
 - CSS
 - Module bundler: Webpack
-# Image-Slider
+
